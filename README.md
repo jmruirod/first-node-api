@@ -1,163 +1,216 @@
-# Backend Node con Typescript template
+# 🚀 First Node API
 
-### Desplegar servidor
+Mi primera API REST con **Express.js** y **TypeScript** para aprender desarrollo backend con **JavaScript**
+
+## 📋 Tabla de Contenidos
+
+- [🛠️ Tecnologías](#️-tecnologías)
+- [🚀 Instalación](#-instalación)
+- [🏃‍♂️ Uso](#️-uso)
+- [📡 Endpoints](#-endpoints)
+- [🧪 Ejemplos de Uso](#-ejemplos-de-uso)
+- [📝 Scripts Disponibles](#-scripts-disponibles)
+
+## 🛠️ Tecnologías
+
+- **Node.js** - Runtime de JavaScript
+- **TypeScript** - Superset tipado de JavaScript
+- **Express.js** - Framework web minimalista
+- **ESLint** - Linter para mantener la calidad del código
+- **Prettier** - Formateador de código
+- **tsx** - TypeScript runner para desarrollo
+
+## 🚀 Instalación
 
 ```bash
+# Clona el repositorio
+git clone <url-del-repositorio>
+cd first-node-api
+
+# Instala las dependencias
+npm install
+# o usando pnpm
+pnpm install
+```
+
+## 🏃‍♂️ Uso
+
+### Desarrollo
+
+```bash
+npm run serve
+# o
 pnpm serve
 ```
 
-### Parametros en url
+### Producción
 
-Se usan los dos puntos --> /api/users/1
+```bash
+# Construir el proyecto
+npm run build
 
-```ts
-app.get("/api/users/:id", (request, response) => {
-  //Los parametros son strings,
-  //si el id es numerico habria que convertirlo
-  //Number(request.params.id);
-  const id = request.params.id;
-  const user = users.find((user) => user.id === id);
-  response.json(user);
-});
+# Ejecutar en producción
+npm start
 ```
 
-### Respuestas personalizadas
+El servidor se ejecutará en `http://localhost:3000`
 
-```ts
-if (user) {
-  response.json(user);
-} else {
-  //Personalisar mensaje status
-  response.statusMessage = "Registro no encontrado";
-  //end para responder sin datos
-  //Los otros metodos ya llevan end al final(send, json, etc)
-  response.status(404).end();
+## 📡 Endpoints
+
+### Base URL: `http://localhost:3000/api`
+
+| Método   | Endpoint     | Descripción                    | Código de Estado |
+| -------- | ------------ | ------------------------------ | ---------------- |
+| `GET`    | `/users`     | Obtiene todos los usuarios     | 200              |
+| `GET`    | `/users/:id` | Obtiene un usuario por ID      | 200, 404         |
+| `POST`   | `/users`     | Crea un nuevo usuario          | 200, 400         |
+| `PUT`    | `/users/:id` | Actualiza un usuario existente | 200, 400, 404    |
+| `DELETE` | `/users/:id` | Elimina un usuario             | 204, 404         |
+
+### 📝 Estructura del Usuario
+
+```json
+{
+  "id": 1,
+  "name": "Juan Pérez",
+  "email": "juan.perez@email.com"
 }
 ```
 
-### Eliminar recurso
+## 🧪 Ejemplos de Uso
 
-```ts
-app.delete("/api/users/:id", (request, response) => {
-  const id = Number(request.params.id);
-  users = users.filter((user) => user.id !== id);
+### 📖 Obtener todos los usuarios
 
-  // 204 No content
-  response.status(204).end();
-});
+```bash
+curl -X GET http://localhost:3000/api/users
 ```
 
-### Crear recurso
+**Respuesta:**
 
-```ts
-app.post("/api/users", (request, response) => {
-  const body = request.body;
-  //Comprobar si vienen los datos correctos
-  if (!body.name) {
-    response.status(400).json({
-      error: "name missing",
-    });
-    // Poner return porque sino seguiria el metodo
-    return;
+```json
+[
+  {
+    "id": 1,
+    "name": "Juan Pérez",
+    "email": "juan.perez@email.com"
+  },
+  {
+    "id": 2,
+    "name": "María García",
+    "email": "maria.garcia@email.com"
   }
-  // Funcion para autoincrementar el id
-  const id = generateId();
-  const user = { id: id, name: body.name };
-  users.push(user);
-  console.log(user);
-  response.json(user);
-});
+]
 ```
 
-### Middleware
+### 🔍 Obtener un usuario específico
 
-Funciones entre la peticion y la respuesta
+```bash
+curl -X GET http://localhost:3000/api/users/1
+```
 
-**Express comprobará rutas y middlewares en orden de definicion, si se quiere un middleware para todas las rutas tendra que definirse antes de todas las rutas, de la misma forma si se quiere uno para despues de comprobar todas las rutas**
+**Respuesta:**
 
-- Propios de express
+```json
+{
+  "id": 1,
+  "name": "Juan Pérez",
+  "email": "juan.perez@email.com"
+}
+```
 
-  ```ts
-  /* body no estara disponible si no se define esto antes de definir todas las rutas */
+### ➕ Crear un nuevo usuario
 
-  // app.use para que se ejecute en todas las rutas
-  // Parsea Json en todas las rutas
-  app.use(express.json());
-  ```
+```bash
+curl -X POST http://localhost:3000/api/users \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Nuevo Usuario",
+    "email": "nuevo@email.com"
+  }'
+```
 
-- Personalizados
+**Respuesta:**
 
-  ```ts
-  /* Info de la peticion */
-  const requestLogger = (request, response, next) => {
-    console.log("Method:", request.method);
-    console.log("Path:  ", request.path);
-    console.log("Body:  ", request.body);
-    console.log("---");
-    // Si no se pone next no pasara al siguiente flujo
-    // No se pone si es el middleware final
-    next();
-  };
+```json
+{
+  "id": 6,
+  "name": "Nuevo Usuario",
+  "email": "nuevo@email.com"
+}
+```
 
-  // Se ejecutara en todas las peticiones
-  app.use(requestLogger);
-  ```
+### ✏️ Actualizar un usuario
 
-  ```ts
-  /* Capturar rutas no encontradas*/
-  const unknownEndpoint = (request, response) => {
-    response.status(404).send({ error: "unknown endpoint" });
-    //No tiene next porque es el final
-  };
+```bash
+curl -X PUT http://localhost:3000/api/users/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "id": 1,
+    "name": "Juan Pérez Actualizado",
+    "email": "juan.actualizado@email.com"
+  }'
+```
 
-  // Se ejecutara en todas las peticiones
-  app.use(unknownEndpoint);
-  ```
+### 🗑️ Eliminar un usuario
 
-  ```ts
-  /* Para una petición en concreto */
-  const validateUser = (req, res, next) => {
-    const { name, email } = req.body;
+```bash
+curl -X DELETE http://localhost:3000/api/users/1
+```
 
-    if (!name || !email) {
-      return res.status(400).json({ error: "Nombre y email requeridos" });
-    }
+## 🚨 Códigos de Error
 
-    next();
-  };
+| Código | Descripción                                |
+| ------ | ------------------------------------------ |
+| `400`  | Bad Request - Datos faltantes o inválidos  |
+| `404`  | Not Found - Usuario no encontrado          |
+| `500`  | Internal Server Error - Error del servidor |
 
-  // Se ejecutará solo en esta peticion
-  app.post("/api/users", validateUser, (req, res) => {
-    // Solo llega aquí si la validación pasa
-    res.json({ message: "Usuario válido" });
-  });
-  ```
+### Ejemplos de Errores
 
-  ```ts
-  /* Para una ruta en concreto */
-  app.use("/users/:id", (req, res, next) => {
-    console.log("Request Type:", req.method);
-    next();
-  });
-  ```
+**Usuario no encontrado (404):**
 
-  ```ts
-  /* Ejemplo orden */
-  const md1 = (_req: express.Request, _res: express.Response, next: express.NextFunction) => {
-    console.log("md1");
-    next();
-  };
+```json
+{
+  "error": "No se ha encontrado el usuario"
+}
+```
 
-  const md2 = (_req: express.Request, _res: express.Response, next: express.NextFunction) => {
-    console.log("md2");
-    next();
-  };
+**Datos faltantes (400):**
 
-  const unknownEndpoint = (_: express.Request, response: express.Response) => {
-    response.status(404).send({ error: "Ruta no encontrada" });
-  };
+```json
+{
+  "error": "Falta el nombre o el email"
+}
+```
 
-  app.use(md1); // Si no se le pone next no pasara a md2
-  app.use(md2); // Si no se le pone next no pasara a unknownEndpoint
-  app.use(unknownEndpoint); // Si se pone primero los demas no se ejecutaran
-  ```
+## 📝 Scripts Disponibles
+
+| Script                      | Descripción                                           |
+| --------------------------- | ----------------------------------------------------- |
+| `npm run serve`             | Ejecuta el servidor en modo desarrollo con hot reload |
+| `npm run build`             | Construye el proyecto para producción                 |
+| `npm start`                 | Ejecuta el servidor en modo producción                |
+| `npm run eslint-check-only` | Verifica el código con ESLint                         |
+| `npm run eslint-fix`        | Corrige automáticamente los errores de ESLint         |
+| `npm run prettier`          | Formatea el código con Prettier                       |
+
+## 🌟 Características
+
+- ✅ **TypeScript** - Tipado estático para mayor robustez
+- ✅ **Validación de datos** - Validación de entrada en todos los endpoints
+- ✅ **Logs de peticiones** - Logging automático de todas las peticiones a la API
+- ✅ **Gestión de errores** - Manejo consistente de errores HTTP
+- ✅ **Hot reload** - Recarga automática durante el desarrollo
+- ✅ **Linting y formateo** - Código limpio y consistente
+
+## 🤝 Contribución
+
+1. Haz fork del proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/nueva-caracteristica`)
+3. Commitea tus cambios (`git commit -am 'Añade nueva característica'`)
+4. Push a la rama (`git push origin feature/nueva-caracteristica`)
+5. Abre un Pull Request
+
+---
+
+💻 **Desarrollado con ❤️ usando Node.js y TypeScript**
