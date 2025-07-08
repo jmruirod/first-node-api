@@ -14,7 +14,7 @@ app.use((request, _response, next) => {
   next();
 });
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+app.use("/", swaggerUi.serve, swaggerUi.setup(specs));
 
 /**
  * @swagger
@@ -210,5 +210,4 @@ app.use(unknownEndpoint);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  console.log(`Ya puede revisar la documentacion en: 📓 http://localhost:${PORT}/api-docs`);
 });
