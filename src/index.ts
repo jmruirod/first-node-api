@@ -1,7 +1,8 @@
 import express from "express";
 import { generateId, users } from "./db/users";
-
-const PORT = 3000;
+import { specs } from "./swagger";
+import swaggerUi from "swagger-ui-express";
+import { PORT } from "./config";
 
 const app = express();
 app.use(express.json());
@@ -13,10 +14,51 @@ app.use((request, _response, next) => {
   next();
 });
 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+
+/**
+ * @swagger
+ * /api/users:
+ *   get:
+ *     summary: Obtiene todos los usuarios
+ *     tags: [Usuarios]
+ *     responses:
+ *       200:
+ *         description: Lista de usuarios
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ */
 app.get("/api/users", (_request, response) => {
   response.json(users);
 });
 
+/**
+ * @swagger
+ * /api/users/{id}:
+ *   get:
+ *     summary: Obtiene un usuario por ID
+ *     tags: [Usuarios]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID del usuario
+ *     responses:
+ *       200:
+ *         description: Usuario encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: Usuario no encontrado
+ */
 app.get("/api/users/:id", (request, response) => {
   const id = Number(request.params.id);
   const user = users.find((user) => user.id === id);
@@ -28,6 +70,28 @@ app.get("/api/users/:id", (request, response) => {
   response.json(user);
 });
 
+/**
+ * @swagger
+ * /api/users:
+ *   post:
+ *     summary: Crea un nuevo usuario
+ *     tags: [Usuarios]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserInput'
+ *     responses:
+ *       200:
+ *         description: Usuario creado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Datos inválidos
+ */
 app.post("/api/users", (request, response) => {
   const body: { name: string; email: string } = request.body;
 
@@ -44,6 +108,37 @@ app.post("/api/users", (request, response) => {
   console.log(user);
 });
 
+/**
+ * @swagger
+ * /api/users/{id}:
+ *   put:
+ *     summary: Actualiza un usuario existente
+ *     tags: [Usuarios]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID del usuario
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       200:
+ *         description: Usuario actualizado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Datos inválidos
+ *       404:
+ *         description: Usuario no encontrado
+ */
 app.put("/api/users/:id", (request, response) => {
   const id = Number(request.params.id);
   const body: { id: number; name: string; email: string } = request.body;
@@ -73,6 +168,25 @@ app.put("/api/users/:id", (request, response) => {
   console.log(users[id]);
 });
 
+/**
+ * @swagger
+ * /api/users/{id}:
+ *   delete:
+ *     summary: Elimina un usuario
+ *     tags: [Usuarios]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: ID del usuario
+ *     responses:
+ *       204:
+ *         description: Usuario eliminado exitosamente
+ *       404:
+ *         description: Usuario no encontrado
+ */
 app.delete("/api/users/:id", (request, response) => {
   const id = Number(request.params.id);
   const userIndex = users.findIndex((user) => user.id === id);
@@ -96,4 +210,5 @@ app.use(unknownEndpoint);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Ya puede revisar la documentacion en: 📓 http://localhost:${PORT}/api-docs`);
 });
