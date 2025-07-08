@@ -14,8 +14,6 @@ app.use((request, _response, next) => {
   next();
 });
 
-app.use("/", swaggerUi.serve, swaggerUi.setup(specs));
-
 /**
  * @swagger
  * /api/users:
@@ -205,6 +203,8 @@ app.delete("/api/users/:id", (request, response) => {
 const unknownEndpoint = (_request: express.Request, response: express.Response) => {
   response.status(404).send({ error: "No se ha encontrado la ruta solicitada" });
 };
+
+app.use("/", swaggerUi.serve, swaggerUi.setup(specs));
 
 app.use(unknownEndpoint);
 
