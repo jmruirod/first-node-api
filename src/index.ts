@@ -19,7 +19,7 @@ app.use((request, _response, next) => {
  * /api/users:
  *   get:
  *     summary: Obtiene todos los usuarios
- *     tags: [Usuarios]
+ *     tags: [users]
  *     responses:
  *       200:
  *         description: Lista de usuarios
@@ -39,7 +39,7 @@ app.get("/api/users", (_request, response) => {
  * /api/users/{id}:
  *   get:
  *     summary: Obtiene un usuario por ID
- *     tags: [Usuarios]
+ *     tags: [users]
  *     parameters:
  *       - in: path
  *         name: id
@@ -73,7 +73,7 @@ app.get("/api/users/:id", (request, response) => {
  * /api/users:
  *   post:
  *     summary: Crea un nuevo usuario
- *     tags: [Usuarios]
+ *     tags: [users]
  *     requestBody:
  *       required: true
  *       content:
@@ -111,7 +111,7 @@ app.post("/api/users", (request, response) => {
  * /api/users/{id}:
  *   put:
  *     summary: Actualiza un usuario existente
- *     tags: [Usuarios]
+ *     tags: [users]
  *     parameters:
  *       - in: path
  *         name: id
@@ -171,7 +171,7 @@ app.put("/api/users/:id", (request, response) => {
  * /api/users/{id}:
  *   delete:
  *     summary: Elimina un usuario
- *     tags: [Usuarios]
+ *     tags: [users]
  *     parameters:
  *       - in: path
  *         name: id
