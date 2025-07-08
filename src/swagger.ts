@@ -56,7 +56,7 @@ const swaggerOptions = {
       },
     },
   },
-  apis: process.env.NODE_ENV === "production" ? ["./dist/index.js"] : ["./src/index.ts"],
+  apis: ["./src/index.ts"],
 };
 
 export const specs = swaggerJSDoc(swaggerOptions);
