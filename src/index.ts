@@ -210,4 +210,5 @@ app.use(unknownEndpoint);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log("ENV---", process.env.NODE_ENV);
 });
