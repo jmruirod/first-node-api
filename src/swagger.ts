@@ -1,4 +1,3 @@
-import { PORT } from "./config";
 import swaggerJSDoc from "swagger-jsdoc";
 
 const swaggerOptions = {
@@ -9,12 +8,6 @@ const swaggerOptions = {
       version: "1.0.0",
       description: "Una API simple para gestionar usuarios",
     },
-    servers: [
-      {
-        url: `http://localhost:${PORT}`,
-        description: "Servidor de desarrollo",
-      },
-    ],
     components: {
       schemas: {
         User: {
@@ -63,7 +56,7 @@ const swaggerOptions = {
       },
     },
   },
-  apis: ["./src/index.ts"], // rutas a los archivos que contienen anotaciones OpenAPI
+  apis: process.env.NODE_ENV === "production" ? ["./dist/index.js"] : ["./src/index.ts"],
 };
 
 export const specs = swaggerJSDoc(swaggerOptions);
