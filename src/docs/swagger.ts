@@ -29,7 +29,7 @@ const swaggerOptions = {
             },
           },
         },
-        UserInput: {
+        UserRequest: {
           type: "object",
           required: ["name", "email"],
           properties: {
@@ -56,7 +56,7 @@ const swaggerOptions = {
       },
     },
   },
-  apis: ["./src/index.ts"],
+  apis: ["src/routes/user.ts"],
 };
 
 export const specs = swaggerJSDoc(swaggerOptions);
