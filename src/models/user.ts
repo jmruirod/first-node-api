@@ -4,7 +4,4 @@ export interface User {
   email: string;
 }
 
-export interface UserRequest {
-  name: string;
-  email: string;
-}
+export type UserRequest = Omit<User, "id">;
