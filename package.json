@@ -9,7 +9,9 @@
     "build": "tsup src/index.ts --out-dir dist --format esm --platform=node --no-splitting --clean",
     "eslint-check-only": "npx eslint .",
     "eslint-fix": "npx eslint . --fix",
-    "prettier": "npx prettier --write ."
+    "prettier": "npx prettier --write .",
+    "docker:build": "docker build -t first-node-api .",
+    "docker:run": "docker run -p 3000:3000 first-node-api"
   },
   "keywords": [],
   "author": "",
