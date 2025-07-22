@@ -19,7 +19,7 @@ const route = Router();
  *               items:
  *                 $ref: '#/components/schemas/User'
  */
-route.get("/users", userController.getAll);
+route.get("/", userController.getAll);
 
 /**
  * @swagger
@@ -44,7 +44,7 @@ route.get("/users", userController.getAll);
  *       404:
  *         description: Usuario no encontrado
  */
-route.get("/users/:id", userController.getById);
+route.get("/:id", userController.getById);
 
 /**
  * @swagger
@@ -68,7 +68,7 @@ route.get("/users/:id", userController.getById);
  *       400:
  *         description: Datos inválidos
  */
-route.post("/users", userController.create);
+route.post("/", userController.create);
 
 /**
  * @swagger
@@ -101,7 +101,7 @@ route.post("/users", userController.create);
  *       404:
  *         description: Usuario no encontrado
  */
-route.put("/users/:id", userController.update);
+route.put("/:id", userController.update);
 
 /**
  * @swagger
@@ -122,6 +122,6 @@ route.put("/users/:id", userController.update);
  *       404:
  *         description: Usuario no encontrado
  */
-route.delete("/users/:id", userController.delete);
+route.delete("/:id", userController.delete);
 
 export { route as userRoute };

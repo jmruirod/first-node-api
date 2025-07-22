@@ -8,7 +8,7 @@ import { logger, unknownEndpoint } from "./middlewares";
 const app = express();
 app.use(express.json());
 app.use(logger);
-app.use("/api", userRoute);
+app.use("/api/users", userRoute);
 app.use("/", swaggerUi.serve, swaggerUi.setup(specs));
 app.use("/", unknownEndpoint);
 
